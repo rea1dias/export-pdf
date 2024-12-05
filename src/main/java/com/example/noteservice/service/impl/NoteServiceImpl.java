@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -45,6 +47,19 @@ public class NoteServiceImpl implements NoteService {
         note.setCreatedAt(LocalDateTime.now());
         note.setUpdatedAt(LocalDateTime.now());
         note.setStatus(Status.ACTIVE);
+
+        if (dto.getReminderTime() != null || !dto.getReminderTime().isEmpty()) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            try {
+                LocalDateTime reminderTime = LocalDateTime.parse(dto.getReminderTime(), formatter);
+                note.setReminderTime(reminderTime);
+            } catch (DateTimeParseException e) {
+                throw new RuntimeException("Invalid reminder time format", e);
+            }
+        } else {
+            note.setReminderTime(null);
+        }
+
         note = repository.save(note);
         return mapper.toDto(note);
     }

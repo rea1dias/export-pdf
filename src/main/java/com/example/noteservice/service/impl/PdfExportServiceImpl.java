@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -39,9 +40,9 @@ public class PdfExportServiceImpl implements PdfExportService {
 
         document.add(p);
 
-        PdfPTable table = new PdfPTable(6);
+        PdfPTable table = new PdfPTable(7);
         table.setWidthPercentage(100f);
-        table.setWidths(new float[]{1.5f, 3.5f, 5.0f, 2.0f, 3.0f, 3.0f});
+        table.setWidths(new float[]{1.5f, 3.5f, 5.0f, 2.0f, 3.0f, 3.0f, 3.0f});
         table.setSpacingBefore(10);
 
         writeTableHeader(table);
@@ -79,9 +80,15 @@ public class PdfExportServiceImpl implements PdfExportService {
 
         cell.setPhrase(new Phrase("Updated At", font));
         table.addCell(cell);
+
+        cell.setPhrase(new Phrase("Reminder Time", font));
+        table.addCell(cell);
     }
 
     private void writeTableData(PdfPTable table, List<Note> notes) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
         for (Note note : notes) {
             table.addCell(String.valueOf(note.getId()));
             table.addCell(note.getTitle());
@@ -89,6 +96,11 @@ public class PdfExportServiceImpl implements PdfExportService {
             table.addCell(note.getCategory().toString());
             table.addCell(note.getCreatedAt().toString());
             table.addCell(note.getUpdatedAt().toString());
+            if (note.getReminderTime() != null) {
+                table.addCell(note.getReminderTime().format(formatter));
+            } else {
+                table.addCell("N/A");
+            }
         }
     }
 }

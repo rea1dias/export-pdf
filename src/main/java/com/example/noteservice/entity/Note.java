@@ -45,4 +45,6 @@ public class Note {
     )
     private Set<Tag> tags = new HashSet<>();
 
+    private LocalDateTime reminderTime;
+
 }

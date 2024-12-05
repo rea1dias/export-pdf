@@ -16,4 +16,5 @@ public class NoteDto {
     private String updatedAt;
     private String status;
     private Set<String> tags;
+    private String reminderTime;
 }
